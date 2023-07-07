@@ -14,6 +14,7 @@ pub(crate) struct Context {
     pub(crate) config: wgpu::SurfaceConfiguration,
     pub(crate) size: winit::dpi::PhysicalSize<u32>,
     pub(crate) window: Window,
+    background: wgpu::Color,
 }
 
 impl Context {
@@ -80,6 +81,7 @@ impl Context {
             config,
             size,
             window,
+            background: BACKGROUND_COLOR,
         }
     }
 
@@ -120,7 +122,7 @@ impl Context {
                     view: &view,
                     resolve_target: None,
                     ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(BACKGROUND_COLOR),
+                        load: wgpu::LoadOp::Clear(self.background),
                         store: true,
                     },
                 })],
@@ -131,5 +133,13 @@ impl Context {
         output.present();
 
         Ok(())
+    }
+
+    pub(crate) fn background_color(&self) -> wgpu::Color {
+        self.background
+    }
+
+    pub(crate) fn set_background_color(&mut self, color: wgpu::Color) {
+        self.background = color;
     }
 }

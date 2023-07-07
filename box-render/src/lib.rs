@@ -16,7 +16,7 @@ pub async fn run() {
     cfg_if::cfg_if! {
         if #[cfg(target_arch = "wasm32")] {
             std::panic::set_hook(Box::new(console_error_panic_hook::hook));
-            console_log::init_with_level(log::Level::Warn).expect("Couldn't initialize logger");
+            console_log::init_with_level(log::Level::Debug).expect("Couldn't initialize logger");
         } else {
             env_logger::init();
         }
@@ -68,6 +68,38 @@ pub async fn run() {
         } if window_id == context.window.id() => {
             if !context.input(event) {
                 match event {
+                    WindowEvent::MouseWheel { delta, .. } => {
+                        let mut color = context.background_color();
+                        match delta {
+                            MouseScrollDelta::PixelDelta(pos) => {
+                                if pos.y > 0.0 {
+                                    color.r = (color.r + 0.025).clamp(0.0, 1.0);
+                                    color.g = (color.g + 0.025).clamp(0.0, 1.0);
+                                    color.b = (color.b + 0.025).clamp(0.0, 1.0);
+                                } else {
+                                    color.r = (color.r - 0.025).clamp(0.0, 1.0);
+                                    color.g = (color.g - 0.025).clamp(0.0, 1.0);
+                                    color.b = (color.b - 0.025).clamp(0.0, 1.0);
+                                }
+                                context.set_background_color(color);
+                                context.window.request_redraw();
+                            }
+                            MouseScrollDelta::LineDelta(_x, y) => {
+                                if *y > 0.0 {
+                                    color.r = (color.r + 0.025).clamp(0.0, 1.0);
+                                    color.g = (color.g + 0.025).clamp(0.0, 1.0);
+                                    color.b = (color.b + 0.025).clamp(0.0, 1.0);
+                                } else {
+                                    color.r = (color.r - 0.025).clamp(0.0, 1.0);
+                                    color.g = (color.g - 0.025).clamp(0.0, 1.0);
+                                    color.b = (color.b - 0.025).clamp(0.0, 1.0);
+                                }
+                                context.set_background_color(color);
+                                context.window.request_redraw();
+                            }
+                            _ => {}
+                        }
+                    }
                     WindowEvent::Resized(physical_size) => {
                         context.resize(*physical_size);
                     }
