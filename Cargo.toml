@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "run-wasm",
+    "box-render",
+]
