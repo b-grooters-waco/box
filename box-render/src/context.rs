@@ -1,4 +1,7 @@
+use wgpu::util::DeviceExt;
 use winit::{event::WindowEvent, window::Window};
+
+use crate::{Vertex, VERTICES};
 
 const BACKGROUND_COLOR: wgpu::Color = wgpu::Color {
     r: 0.85,
@@ -15,6 +18,8 @@ pub(crate) struct Context {
     pub(crate) size: winit::dpi::PhysicalSize<u32>,
     pub(crate) window: Window,
     pub(crate) pipeline: wgpu::RenderPipeline,
+    pub(crate) vertex_buffer: wgpu::Buffer,
+    pub(crate) vertex_count: u32,
     background: wgpu::Color,
 }
 
@@ -89,7 +94,7 @@ impl Context {
             vertex: wgpu::VertexState {
                 module: &shader,
                 entry_point: "vs_main",
-                buffers: &[],
+                buffers: &[Vertex::desc()],
             },
             fragment: Some(wgpu::FragmentState {
                 module: &shader,
@@ -118,6 +123,12 @@ impl Context {
             multiview: None,
         });
         surface.configure(&device, &config);
+        let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("Vertex Buffer"),
+            contents: bytemuck::cast_slice(VERTICES),
+            usage: wgpu::BufferUsages::VERTEX,
+        });
+        let vertex_count = VERTICES.len() as u32;
 
         Context {
             surface,
@@ -127,6 +138,8 @@ impl Context {
             size,
             window,
             pipeline,
+            vertex_buffer,
+            vertex_count,
             background: BACKGROUND_COLOR,
         }
     }
@@ -175,7 +188,8 @@ impl Context {
                 depth_stencil_attachment: None,
             });
             render_pass.set_pipeline(&self.pipeline);
-            render_pass.draw(0..6, 0..1);
+            render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
+            render_pass.draw(0..self.vertex_count, 0..1);
         }
         self.queue.submit(std::iter::once(encoder.finish()));
         output.present();
