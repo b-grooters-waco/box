@@ -9,6 +9,9 @@ license = "MIT"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+[[bin]]
+name = "render-app"
+path = "src/main.rs"
 
 [dependencies]
 wgpu = "0.16.1"
