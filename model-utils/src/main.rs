@@ -1,5 +1,7 @@
 use clap::Parser;
 
+const COLOR_TABLE: [[f32; 3]; 3] = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]];
+
 #[derive(Copy, Clone, Debug)]
 struct Vertex {
     position: [f32; 3],
@@ -18,7 +20,7 @@ struct Polygon {
 struct Args {}
 
 fn main() {
-    let rect = Polygon::new(4);
+    let rect = Polygon::new(6);
     println!("{:?}", rect);
 }
 
@@ -34,13 +36,13 @@ impl Polygon {
         // Create the vertices.
         vertices.push(Vertex {
             position: [0.0, 0.0, 0.0],
-            color: [1.0, 1.0, 1.0],
+            color: COLOR_TABLE[0],
         });
         for i in 0..sides {
             let angle = 2.0 * std::f32::consts::PI * (i as f32) / (sides as f32);
             vertices.push(Vertex {
                 position: [angle.cos(), angle.sin(), 0.0],
-                color: [1.0, 1.0, 1.0],
+                color: COLOR_TABLE[((i + 1) % 2 + 1) as usize],
             });
         }
         // Create the indices.

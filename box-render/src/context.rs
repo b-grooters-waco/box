@@ -1,7 +1,7 @@
 use wgpu::util::DeviceExt;
 use winit::{event::WindowEvent, window::Window};
 
-use crate::{Vertex, VERTICES};
+use crate::{Vertex, INDICES, VERTICES};
 
 const BACKGROUND_COLOR: wgpu::Color = wgpu::Color {
     r: 0.85,
@@ -20,6 +20,8 @@ pub(crate) struct Context {
     pub(crate) pipeline: wgpu::RenderPipeline,
     pub(crate) vertex_buffer: wgpu::Buffer,
     pub(crate) vertex_count: u32,
+    pub(crate) index_buffer: wgpu::Buffer,
+    pub(crate) index_count: u32,
     background: wgpu::Color,
 }
 
@@ -129,6 +131,12 @@ impl Context {
             usage: wgpu::BufferUsages::VERTEX,
         });
         let vertex_count = VERTICES.len() as u32;
+        let index_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("Index Buffer"),
+            contents: bytemuck::cast_slice(INDICES),
+            usage: wgpu::BufferUsages::INDEX,
+        });
+        let index_count = INDICES.len() as u32;
 
         Context {
             surface,
@@ -140,6 +148,8 @@ impl Context {
             pipeline,
             vertex_buffer,
             vertex_count,
+            index_buffer,
+            index_count,
             background: BACKGROUND_COLOR,
         }
     }
@@ -189,7 +199,8 @@ impl Context {
             });
             render_pass.set_pipeline(&self.pipeline);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
-            render_pass.draw(0..self.vertex_count, 0..1);
+            render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
+            render_pass.draw_indexed(0..self.index_count, 0, 0..1);
         }
         self.queue.submit(std::iter::once(encoder.finish()));
         output.present();
