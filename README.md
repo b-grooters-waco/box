@@ -2,7 +2,8 @@
 
 ## Current State
 
-
+Simple 2D Texture [2023-07-09]
+![texture](images/hex-texture.png)
 
 ## Running in the Browser
 
