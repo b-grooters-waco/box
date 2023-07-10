@@ -1,4 +1,5 @@
 mod context;
+mod texture;
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -8,8 +9,6 @@ use winit::{
     event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
 };
-
-const DOC_ELEMENT_ID: &str = "planogram-canvas";
 
 const VERTICES: &[Vertex] = &[
     Vertex {
@@ -49,7 +48,6 @@ const INDICES: &[u16] = &[0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 1];
 struct Vertex {
     position: [f32; 3],
     texture_coords: [f32; 2],
-    //    color: [f32; 3],
 }
 
 impl Vertex {
@@ -85,7 +83,11 @@ pub async fn run() {
     }
 
     let event_loop = EventLoop::new();
-    let window = WindowBuilder::new().build(&event_loop).unwrap();
+    let window = WindowBuilder::new()
+        .with_inner_size(winit::dpi::LogicalSize::new(400, 400))
+        .build(&event_loop)
+        .unwrap();
+    window.set_title("Box Render");
 
     #[cfg(target_arch = "wasm32")]
     {
@@ -159,7 +161,6 @@ pub async fn run() {
                                 context.set_background_color(color);
                                 context.window.request_redraw();
                             }
-                            _ => {}
                         }
                     }
                     WindowEvent::Resized(physical_size) => {

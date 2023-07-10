@@ -5,6 +5,14 @@
 Simple 2D Texture [2023-07-09]
 ![texture](images/hex-texture.png)
 
+Use the mouse wheel to lighten or darken the background.
+
+## Running on the Desktop
+
+```ps1
+> cargo run --package box-render
+```
+
 ## Running in the Browser
 
 You can run this project using the legacy WebGL bindings or the new WebGPU 
@@ -22,11 +30,11 @@ You can then run the WASM project with one of the following commands depending
 
  WebGPU
 ```ps1
-> cargo run-wasm --package box-render
+> cargo run-wasm --package box-render --bin render-app
 ```
 
 WebGL
 ```ps1
-> cargo run-wasm --package box-render --features webgl
+> cargo run-wasm --package box-render --features webgl --bin render-app
 ```
 
