@@ -7,6 +7,9 @@ Simple 2D Texture [2023-07-09]
 
 Use the mouse wheel to lighten or darken the background.
 
+Use    
+Use the &uarr; &darr; or `W` `S` keys to move the camera closer or further away from the object and &larr; &rarr; or `A` `D` to rotate the camera around the Y axis.
+ 
 ## Running on the Desktop
 
 ```ps1
